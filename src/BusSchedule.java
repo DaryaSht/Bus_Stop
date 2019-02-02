@@ -15,7 +15,7 @@ public class BusSchedule {
         arrival_time = a_t;
     }
 
-    private static void read_from_file(ArrayList<BusSchedule> list, Scanner reader) throws ParseException {
+    private static void readFromFile(ArrayList<BusSchedule> list, Scanner reader) throws ParseException {
 
         while (reader.hasNextLine()) {
             SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
@@ -29,7 +29,7 @@ public class BusSchedule {
         }
     }
 
-    private static void write_to_file(ArrayList<BusSchedule> list, FileWriter writer){
+    private static void writeToFile(ArrayList<BusSchedule> list, FileWriter writer){
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
             for(int i = 0; i < list.size(); i++){
@@ -44,7 +44,7 @@ public class BusSchedule {
         }
     }
 
-    private static void sort_by_departure_time(ArrayList<BusSchedule> list){
+    private static void sortByDepartureTime(ArrayList<BusSchedule> list){
         Collections.sort(list, new Comparator<BusSchedule>() {
             public int compare(BusSchedule object1, BusSchedule object2) {
                 return object1.departure_time.compareTo(object2.departure_time);
@@ -52,14 +52,14 @@ public class BusSchedule {
         });
     }
 
-    private static void remove_long_routers(ArrayList<BusSchedule> list){
+    private static void removeLongRouters(ArrayList<BusSchedule> list){
         for(int i = 0; i < list.size(); i++){
             if(((list.get(i).arrival_time.getTime() - list.get(i).departure_time.getTime()) / (60 * 1000))>60)
                 list.remove(i);
         }
     }
 
-    private static void find_effective_routers(ArrayList<BusSchedule> list, ArrayList<BusSchedule> effective_list){
+    private static void findEffectiveRouters(ArrayList<BusSchedule> list, ArrayList<BusSchedule> effective_list){
 
         for(BusSchedule l : list) {
             effective_list.add(l);
@@ -103,8 +103,9 @@ public class BusSchedule {
         }
     }
 
-    private static void split_posh_and_grotty(ArrayList<BusSchedule> effective_list,
-                                              ArrayList<BusSchedule> posh_list, ArrayList<BusSchedule> grotty_list){
+    private static void splitPoshAndGrotty(ArrayList<BusSchedule> effective_list,
+                                           ArrayList<BusSchedule> posh_list,
+                                           ArrayList<BusSchedule> grotty_list){
 
         for(int i = 0; i<effective_list.size(); i++){
             if(effective_list.get(i).company.equals("Posh"))
@@ -120,24 +121,24 @@ public class BusSchedule {
 
             Scanner reader = new Scanner(new File("input.txt"));
 
-            read_from_file(bus_list, reader);
+            readFromFile(bus_list, reader);
             reader.close();
 
             ArrayList<BusSchedule> effective_routers = new ArrayList<>();
             ArrayList<BusSchedule> posh_routers = new ArrayList<>();
             ArrayList<BusSchedule> grotty_routers = new ArrayList<>();
 
-            sort_by_departure_time(bus_list);
-            remove_long_routers(bus_list);
-            find_effective_routers(bus_list, effective_routers);
-            split_posh_and_grotty(effective_routers, posh_routers, grotty_routers);
-            sort_by_departure_time(posh_routers);
-            sort_by_departure_time(grotty_routers);
+            sortByDepartureTime(bus_list);
+            removeLongRouters(bus_list);
+            findEffectiveRouters(bus_list, effective_routers);
+            splitPoshAndGrotty(effective_routers, posh_routers, grotty_routers);
+            sortByDepartureTime(posh_routers);
+            sortByDepartureTime(grotty_routers);
 
             FileWriter writer = new FileWriter("output.txt", false);
-            write_to_file(posh_routers, writer);
+            writeToFile(posh_routers, writer);
             writer.write("\r\n");
-            write_to_file(grotty_routers, writer);
+            writeToFile(grotty_routers, writer);
             writer.close();
         }
 
